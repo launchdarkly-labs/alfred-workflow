@@ -18,7 +18,6 @@ You can get the JQPATH via `which` command.
 $ which jq
 /usr/local/bin/jq
 ```
-:fire: Note that `/usr/local/bin` is your JQPATH instead of `/usr/local/bin/jq`
 
 ## Usage
 
