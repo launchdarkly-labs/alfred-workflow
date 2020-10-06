@@ -2,25 +2,9 @@
 
 query="$1"
 PATH="$PATH:/usr/local/bin"
-JQ_BIN=$(which jq)
+JQ_BIN=$(command -v jq)
 ALGOLIA_HOST="https://dl2c5qx6xb-dsn.algolia.net"
 ALGOLIA_API_KEY="9a89b2831ea7014e98ec4a0f477d2de5"
-DOC_SITE="https://docs.launchdarkly.com"
-
-if [ -f "/usr/local/bin/jq" ]; then
-    JQ_COMMAND="/usr/local/bin/jq"
-elif [ -f "/usr/bin/jq" ]; then
-    JQ_COMMAND="/usr/bin/jq"
-elif [ -f "$HOME/bin/jq" ]; then
-    JQ_COMMAND="$HOME/bin/jq"
-fi
-
-if [[ -z "${JQPATH}" ]]; then
-    JQ_COMMAND=$(which jq)
-elif [ -z "$JQ_COMMAND" ]; then
-    export PATH=$JQPATH:$PATH
-    JQ_COMMAND="jq"
-fi
 
 uriencode() {
   s="${1//'%'/%25}"
@@ -47,4 +31,4 @@ curl "${ALGOLIA_HOST}/1/indexes/*/queries?x-algolia-agent=Alfred&x-algolia-appli
   -H 'accept: application/json' \
   -H 'content-type: application/json' \
   --data-raw '{"requests":[{"indexName":"Docs_production","params":"query='"$(uriencode "$query")"'&facets=%5B%5D&tagFilters="}]}' \
-  --compressed | ${JQ_BIN} ".results[].hits | {items: map({type: 'url', title: .title, uid: (${DOC_SITE} + .path), arg: (${DOC_SITE} + .path), subtitle: .description, quicklookurl: (${DOC_SITE} + .path) }) }"
+  --compressed | ${JQ_BIN} '.results[].hits | {items: map({type: "url", title: .title, uid: ("https://docs.launchdarkly.com" + .path), arg: ("https://docs.launchdarkly.com" + .path), subtitle: .description, quicklookurl: ("https://docs.launchdarkly.com" + .path) }) }'
